@@ -13,22 +13,22 @@ Database được migrate ở trên chỉ là database chứa các bảng trong 
 
 ## Call API
 #### Create
-https://localhost:5001/{ModelName}/Create
+https://localhost:5001/{ModelName}/{ModelName}Create
 #### Update
-https://localhost:5001/{ModelName}/Edit/id
+https://localhost:5001/{ModelName}/{ModelName}Edit/id
 #### Delete
-https://localhost:5001/{ModelName}/Delete/id
+https://localhost:5001/{ModelName}/{ModelName}Delete/id
 #### Get
-https://localhost:5001/{ModelName}/Details/id
+https://localhost:5001/{ModelName}/{ModelName}Details/id
 #### Get List
-https://localhost:5001/{ModelName}/Index
+https://localhost:5001/{ModelName}/{ModelName}Index
 
 #### Lưu ý
 ##### API create không truyền id ở JSON
 ##### API update cần truyền id ở cả URL và JSON
 * URL
 
-https://localhost:5001/{ModelName}/Edit/id
+https://localhost:5001/{ModelName}/{ModelName}Edit/id
 * JSON
 
 `{
