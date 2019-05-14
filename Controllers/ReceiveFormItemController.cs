@@ -21,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
 
         // GET: ReceiveFormItem/Details/id
         [HttpGet]
-        public async Task<IActionResult> ReceiveFormItemsDetails(int id)
+        public async Task<IActionResult> ReceiveFormItemDetails(int id)
         {
             var receiveFormItem = await _context.ReceiveFormItems
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -31,7 +31,7 @@ namespace SieuThiDienThoai.Controllers
 
         //POST: ReceiveFormItem/Create
         [HttpPost]
-        public IActionResult ReceiveFormItemsCreate([FromBody] ReceiveFormItem receiveFormItem)
+        public IActionResult ReceiveFormItemCreate([FromBody] ReceiveFormItem receiveFormItem)
         {
             ReceiveFormItem test = new ReceiveFormItem();
             test = receiveFormItem;
@@ -59,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
 
         // UPDATE: ReceiveFormItem/Edit/id
         [HttpPost]
-        public async Task<IActionResult> ReceiveFormItemsEdit(int id, [FromBody] ReceiveFormItem receiveFormItem)
+        public async Task<IActionResult> ReceiveFormItemEdit(int id, [FromBody] ReceiveFormItem receiveFormItem)
         {
             if (id != receiveFormItem.Id)
             {
@@ -90,7 +90,7 @@ namespace SieuThiDienThoai.Controllers
 
         // GETALL: ReceiveFormItem/Index
         [HttpGet]
-        public async Task<IActionResult> ReceiveFormItemsIndex()
+        public async Task<IActionResult> ReceiveFormItemIndex()
         {
             return Json(await _context.ReceiveFormItems.ToListAsync());
         }
