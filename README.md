@@ -24,7 +24,8 @@ https://localhost:5001/{ModelName}/Details/id
 https://localhost:5001/{ModelName}/Index
 
 #### Lưu ý
-Ở API update cần truyền id ở cả URL và JSON
+##### API create không truyền id ở JSON
+##### API update cần truyền id ở cả URL và JSON
 * URL
 
 https://localhost:5001/{ModelName}/Edit/id
