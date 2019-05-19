@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class BillItemController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: BillItem/Details/id
-        [HttpGet]
+         [HttpGet("{id}")]
         public async Task<IActionResult> BillItemDetails(int id)
         {
             var billItem = await _context.BillItems
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: BillItem/Delete/id
-        [HttpPost]
+         [HttpDelete("{id}")]
         public async Task<IActionResult> BillItemDelete(int id)
         {
             var billItem = await _context.BillItems.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: BillItem/Edit/id
-        [HttpPost]
+        [HttpPut("{id}")]
         public async Task<IActionResult> BillItemEdit(int id,[FromBody] BillItem billItem)
         {
             if (id != billItem.Id)

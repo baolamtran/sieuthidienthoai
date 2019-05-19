@@ -8,6 +8,7 @@ namespace SieuThiDienThoai.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            
             migrationBuilder.CreateTable(
                 name: "BillDeliveries",
                 columns: table => new

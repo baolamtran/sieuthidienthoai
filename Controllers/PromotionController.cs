@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class PromotionController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: Promotion/Details/id
-        [HttpGet]
+         [HttpGet("{id}")]
         public async Task<IActionResult> PromotionDetails(int id)
         {
             var promotion = await _context.Promotions
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: Promotion/Delete/id
-        [HttpPost]
+         [HttpDelete("{id}")]
         public async Task<IActionResult> PromotionDelete(int id)
         {
             var promotion = await _context.Promotions.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: Promotion/Edit/id
-        [HttpPost]
+         [HttpPut("{id}")]
         public async Task<IActionResult> PromotionEdit(int id,[FromBody] Promotion promotion)
         {
             if (id != promotion.Id)

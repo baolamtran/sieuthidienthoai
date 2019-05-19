@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class SupplierController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -19,7 +20,7 @@ namespace SieuThiDienThoai.Controllers
             _context = context;
         }
         // GET: Supplier/Details/id
-        [HttpGet]
+       [HttpGet("{id}")]
         public async Task<IActionResult> SupplierDetails(int id)
         {
             var supplier = await _context.Suppliers
@@ -43,7 +44,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: Supplier/Delete/id
-        [HttpPost]
+         [HttpDelete("{id}")]
         public async Task<IActionResult> SupplierDelete(int id)
         {
             var supplier = await _context.Suppliers.FindAsync(id);
@@ -57,7 +58,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: Supplier/Edit/id
-        [HttpPost]
+        [HttpPut("{id}")]
         public async Task<IActionResult> SupplierEdit(int id,[FromBody] Supplier supplier)
         {
             if (id != supplier.Id)

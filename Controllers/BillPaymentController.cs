@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class BillPaymentController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: BillPayment/Details/id
-        [HttpGet]
+         [HttpGet("{id}")]
         public async Task<IActionResult> BillPaymentDetails(int id)
         {
             var billPayment = await _context.BillPayments
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
          // DELETE: BillPayment/Delete/id
-        [HttpPost]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> BillPaymentDelete(int id)
         {
             var billPayment = await _context.BillPayments.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: BillPayment/Edit/id
-        [HttpPost]
+        [HttpPut("{id}")]
         public async Task<IActionResult> BillPaymentEdit(int id,[FromBody] BillPayment billPayment)
         {
             if (id != billPayment.Id)

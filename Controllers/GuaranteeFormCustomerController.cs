@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class GuaranteeFormCustomerController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: GuaranteeFormCustomer/Details/id
-        [HttpGet]
+         [HttpGet("{id}")]
         public async Task<IActionResult> GuaranteeFormCustomerDetails(int id)
         {
             var guaranteeFormCustomer = await _context.GuaranteeFormCustomers
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: GuaranteeFormCustomer/Delete/id
-        [HttpPost]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> GuaranteeFormCustomerDelete(int id)
         {
             var guaranteeFormCustomer = await _context.GuaranteeFormCustomers.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: GuaranteeFormCustomer/Edit/id
-        [HttpPost]
+         [HttpPut("{id}")]
         public async Task<IActionResult> GuaranteeFormCustomerEdit(int id,[FromBody] GuaranteeFormCustomer guaranteeFormCustomer)
         {
             if (id != guaranteeFormCustomer.Id)

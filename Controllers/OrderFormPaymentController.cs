@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class OrderFormPaymentController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: OrderFormPayment/Details/id
-        [HttpGet]
+         [HttpGet("{id}")]
         public async Task<IActionResult> OrderFormPaymentDetails(int id)
         {
             var orderFormPayment = await _context.OrderFormPayments
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: OrderFormPayment/Delete/id
-        [HttpPost]
+         [HttpDelete("{id}")]
         public async Task<IActionResult> OrderFormPaymentDelete(int id)
         {
             var orderFormPayment = await _context.OrderFormPayments.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: OrderFormPayment/Edit/id
-        [HttpPost]
+         [HttpPut("{id}")]
         public async Task<IActionResult> OrderFormPaymentEdit(int id,[FromBody] OrderFormPayment orderFormPayment)
         {
             if (id != orderFormPayment.Id)

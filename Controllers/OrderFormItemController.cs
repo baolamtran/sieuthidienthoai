@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class OrderFormItemController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: OrderFormItem/Details/id
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> OrderFormItemDetails(int id)
         {
             var orderFormItem = await _context.OrderFormItems
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: OrderFormItem/Delete/id
-        [HttpPost]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> OrderFormItemDelete(int id)
         {
             var orderFormItem = await _context.OrderFormItems.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: OrderFormItem/Edit/id
-        [HttpPost]
+         [HttpPut("{id}")]
         public async Task<IActionResult> OrderFormItemEdit(int id,[FromBody] OrderFormItem orderFormItem)
         {
             if (id != orderFormItem.Id)

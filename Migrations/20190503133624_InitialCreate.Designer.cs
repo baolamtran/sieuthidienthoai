@@ -9,8 +9,8 @@ using SieuThiDienThoai.Data;
 
 namespace SieuThiDienThoai.Migrations
 {
-    [DbContext(typeof(SieuThiDienThoaiDbContext))]
-    [Migration("20190503133624_InitialCreate")]
+   [DbContext(typeof(SieuThiDienThoaiDbContext))]
+   [Migration("20190503133624_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

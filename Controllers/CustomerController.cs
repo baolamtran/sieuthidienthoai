@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class CustomerController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: Customer/Details/id
-        [HttpGet]
+         [HttpGet("{id}")]
         public async Task<IActionResult> CustomerDetails(int id)
         {
             var customer = await _context.Customers
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: Customer/Delete/id
-        [HttpPost]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> CustomerDelete(int id)
         {
             var customer = await _context.Customers.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: Customer/Edit/id
-        [HttpPost]
+         [HttpPut("{id}")]
         public async Task<IActionResult> CustomerEdit(int id,[FromBody] Customer customer)
         {
             if (id != customer.Id)

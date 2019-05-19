@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class ProductController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: Product/Details/id
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> ProductDetails(int id)
         {
             var product = await _context.Products
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: Product/Delete/id
-        [HttpPost]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> ProductDelete(int id)
         {
             var product = await _context.Products.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: Product/Edit/id
-        [HttpPost]
+         [HttpPut("{id}")]
         public async Task<IActionResult> ProductEdit(int id,[FromBody] Product product)
         {
             if (id != product.Id)
