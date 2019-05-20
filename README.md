@@ -9,20 +9,34 @@
 dotnet ef database update
 ```
 #### Lưu ý
-Database được migrate ở trên chỉ là database chứa các bảng trong diagram chưa có liên kết khóa ngoại, phải tự vào sql server management để viết thêm. (Server Name: BAOLAM (đã thay thế ở trên); Authentication: Windows Authentication)
+Database được migrate ở trên chỉ là database chứa các bảng trong diagram chưa có liên kết khóa ngoại, phải tự vào SQL Server Management để viết thêm. (Server Name: BAOLAM (đã thay thế ở trên); Authentication: Windows Authentication)
 
 ## Call API
 #### Create
-https://localhost:5001/{ModelName}/{ModelName}Create
+Method: POST
+``` shell
+https://localhost:5001/api/{ModelName}
+```
 #### Update
-https://localhost:5001/{ModelName}/{ModelName}Edit/id
+Method: PUT
+``` shell
+https://localhost:5001/api/{ModelName}/{id}
+```
 #### Delete
-https://localhost:5001/{ModelName}/{ModelName}Delete/id
+Method: DELETE
+``` shell
+https://localhost:5001/api/{ModelName}/{id}
+```
 #### Get
-https://localhost:5001/{ModelName}/{ModelName}Details/id
+Method: GET
+``` shell
+https://localhost:5001/api/{ModelName}/{id}
+```
 #### Get List
-https://localhost:5001/{ModelName}/{ModelName}Index
-
+Method: GET
+``` shell
+https://localhost:5001/api/{ModelName}
+```
 #### Lưu ý
 ##### API create không truyền id ở JSON
 ##### API update cần truyền id ở cả URL và JSON
