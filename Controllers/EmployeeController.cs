@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class EmployeeController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: Employee/Details/id
-        [HttpGet]
+         [HttpGet("{id}")]
         public async Task<IActionResult> EmployeeDetails(int id)
         {
             var employee = await _context.Employees
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: Employee/Delete/id
-        [HttpPost]
+         [HttpDelete("{id}")]
         public async Task<IActionResult> EmployeeDelete(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: Employee/Edit/id
-        [HttpPost]
+         [HttpPut("{id}")]
         public async Task<IActionResult> EmployeeEdit(int id,[FromBody] Employee employee)
         {
             if (id != employee.Id)

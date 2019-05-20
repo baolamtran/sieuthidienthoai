@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+    [Route("api/[controller]")]
     public class ProductCategoryController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: ProductCategory/Details/id
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> ProductCategoryDetails(int id)
         {
             var productCategory = await _context.ProductCategories
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: ProductCategory/Delete/id
-        [HttpPost]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> ProductCategoryDelete(int id)
         {
             var productCategory = await _context.ProductCategories.FindAsync(id);
@@ -58,8 +59,8 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: ProductCategory/Edit/id
-        [HttpPost]
-        public async Task<IActionResult> ProductCategoryEdit(int id,[FromBody] ProductCategory productCategory)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ProductCategoryEdit(int id, [FromBody] ProductCategory productCategory)
         {
             if (id != productCategory.Id)
             {
@@ -90,8 +91,9 @@ namespace SieuThiDienThoai.Controllers
 
         // GETALL: ProductCategory/Index
         [HttpGet]
-        public async Task<IActionResult> ProductCategoryIndex()
+        public async Task<IActionResult> Get()
         {
+            //return Json("La sao");
             return Json(await _context.ProductCategories.ToListAsync());
         }
 

@@ -12947,23 +12947,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Mori\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "/Users/mac/.nuget/packages/": {},
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\Mori\\Desktop\\SieuThiDienThoai\\SieuThiDienThoai.csproj",
+      "projectUniqueName": "/Users/mac/sieuthidienthoai/SieuThiDienThoai.csproj",
       "projectName": "SieuThiDienThoai",
-      "projectPath": "c:\\Users\\Mori\\Desktop\\SieuThiDienThoai\\SieuThiDienThoai.csproj",
-      "packagesPath": "C:\\Users\\Mori\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\Mori\\Desktop\\SieuThiDienThoai\\obj\\",
+      "projectPath": "/Users/mac/sieuthidienthoai/SieuThiDienThoai.csproj",
+      "packagesPath": "/Users/mac/.nuget/packages/",
+      "outputPath": "/Users/mac/sieuthidienthoai/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Mori\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/mac/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.2"

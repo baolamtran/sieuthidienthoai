@@ -10,6 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
+     [Route("api/[controller]")]
     public class ReceiveFormItemController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -20,7 +21,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: ReceiveFormItem/Details/id
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> ReceiveFormItemDetails(int id)
         {
             var receiveFormItem = await _context.ReceiveFormItems
@@ -44,7 +45,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // DELETE: ReceiveFormItem/Delete/id
-        [HttpPost]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> ReceiveFormItemsDelete(int id)
         {
             var receiveFormItem = await _context.ReceiveFormItems.FindAsync(id);
@@ -58,7 +59,7 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: ReceiveFormItem/Edit/id
-        [HttpPost]
+        [HttpPut("{id}")]
         public async Task<IActionResult> ReceiveFormItemEdit(int id, [FromBody] ReceiveFormItem receiveFormItem)
         {
             if (id != receiveFormItem.Id)
