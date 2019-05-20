@@ -42,7 +42,7 @@ https://localhost:5001/api/{ModelName}
 ##### API update cần truyền id ở cả URL và JSON
 * URL
 
-https://localhost:5001/{ModelName}/{ModelName}Edit/id
+https://localhost:5001/api/{ModelName}/{id}
 * JSON
 
 `{
