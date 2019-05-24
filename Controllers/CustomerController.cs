@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class CustomerController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: Customer/Details/id
-         [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> CustomerDetails(int id)
         {
             var customer = await _context.Customers
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (customer == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(customer);
         }
@@ -34,14 +40,28 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult CustomerCreate([FromBody] Customer customer)
         {
-            Customer test = new Customer();
-            test = customer;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                Customer test = new Customer();
+                test = customer;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: Customer/Delete/id
@@ -51,20 +71,22 @@ namespace SieuThiDienThoai.Controllers
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: Customer/Edit/id
-         [HttpPut("{id}")]
-        public async Task<IActionResult> CustomerEdit(int id,[FromBody] Customer customer)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> CustomerEdit(int id, [FromBody] Customer customer)
         {
             if (id != customer.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!CustomerExists(customer.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(customer);
         }
 
         // GETALL: Customer/Index
         [HttpGet]
         public async Task<IActionResult> CustomerIndex()
         {
-            return Json(await _context.Customers.ToListAsync());
+            return Ok(await _context.Customers.ToListAsync());
         }
 
         private bool CustomerExists(int id)

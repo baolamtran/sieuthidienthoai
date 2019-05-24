@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class BillPaymentController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: BillPayment/Details/id
-         [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> BillPaymentDetails(int id)
         {
             var billPayment = await _context.BillPayments
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (billPayment == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(billPayment);
         }
@@ -34,37 +40,53 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult BillPaymentCreate([FromBody] BillPayment billPayment)
         {
-            BillPayment test = new BillPayment();
-            test = billPayment;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                BillPayment test = new BillPayment();
+                test = billPayment;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
-         // DELETE: BillPayment/Delete/id
+        // DELETE: BillPayment/Delete/id
         [HttpDelete("{id}")]
         public async Task<IActionResult> BillPaymentDelete(int id)
         {
             var billPayment = await _context.BillPayments.FindAsync(id);
             if (billPayment == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.BillPayments.Remove(billPayment);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: BillPayment/Edit/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> BillPaymentEdit(int id,[FromBody] BillPayment billPayment)
+        public async Task<IActionResult> BillPaymentEdit(int id, [FromBody] BillPayment billPayment)
         {
             if (id != billPayment.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!BillPaymentExists(billPayment.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(billPayment);
         }
 
         // GETALL: BillPayment/Index
         [HttpGet]
         public async Task<IActionResult> BillPaymentIndex()
         {
-            return Json(await _context.BillPayments.ToListAsync());
+            return Ok(await _context.BillPayments.ToListAsync());
         }
 
         private bool BillPaymentExists(int id)

@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class EmployeeController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: Employee/Details/id
-         [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> EmployeeDetails(int id)
         {
             var employee = await _context.Employees
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (employee == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(employee);
         }
@@ -34,37 +40,53 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult EmployeeCreate([FromBody] Employee employee)
         {
-            Employee test = new Employee();
-            test = employee;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                Employee test = new Employee();
+                test = employee;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: Employee/Delete/id
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> EmployeeDelete(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: Employee/Edit/id
-         [HttpPut("{id}")]
-        public async Task<IActionResult> EmployeeEdit(int id,[FromBody] Employee employee)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EmployeeEdit(int id, [FromBody] Employee employee)
         {
             if (id != employee.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!EmployeeExists(employee.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(employee);
         }
 
         // GETALL: Employee/Index
         [HttpGet]
         public async Task<IActionResult> EmployeeIndex()
         {
-            return Json(await _context.Employees.ToListAsync());
+            return Ok(await _context.Employees.ToListAsync());
         }
 
         private bool EmployeeExists(int id)

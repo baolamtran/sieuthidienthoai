@@ -27,6 +27,12 @@ namespace SieuThiDienThoai.Controllers
             var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            if (product == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
+
             return Ok(product);
         }
 
@@ -42,12 +48,14 @@ namespace SieuThiDienThoai.Controllers
                 {
                     _context.Add(test);
                     _context.SaveChangesAsync();
-                     return Json(test);
-                } else {
+                    return Ok(test);
+                }
+                else
+                {
                     Console.WriteLine("Không đúng định dạng");
                     return BadRequest();
                 }
-               
+
             }
             catch (ArgumentException err)
             {
@@ -63,11 +71,12 @@ namespace SieuThiDienThoai.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: Product/Edit/id
@@ -76,7 +85,8 @@ namespace SieuThiDienThoai.Controllers
         {
             if (id != product.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -90,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!ProductExists(product.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -98,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(product);
         }
 
         // GETALL: Product/Index
         [HttpGet]
         public async Task<IActionResult> ProductIndex()
         {
-            return Json(await _context.Products.ToListAsync());
+            return Ok(await _context.Products.ToListAsync());
         }
 
         private bool ProductExists(int id)

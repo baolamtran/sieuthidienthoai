@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class BillItemController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: BillItem/Details/id
-         [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> BillItemDetails(int id)
         {
             var billItem = await _context.BillItems
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (billItem == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(billItem);
         }
@@ -34,37 +40,53 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult BillItemCreate([FromBody] BillItem billItem)
         {
-            BillItem test = new BillItem();
-            test = billItem;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                BillItem test = new BillItem();
+                test = billItem;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: BillItem/Delete/id
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> BillItemDelete(int id)
         {
             var billItem = await _context.BillItems.FindAsync(id);
             if (billItem == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.BillItems.Remove(billItem);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: BillItem/Edit/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> BillItemEdit(int id,[FromBody] BillItem billItem)
+        public async Task<IActionResult> BillItemEdit(int id, [FromBody] BillItem billItem)
         {
             if (id != billItem.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!BillItemExists(billItem.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(billItem);
         }
 
         // GETALL: BillItem/Index
         [HttpGet]
         public async Task<IActionResult> BillItemIndex()
         {
-            return Json(await _context.BillItems.ToListAsync());
+            return Ok(await _context.BillItems.ToListAsync());
         }
 
         private bool BillItemExists(int id)

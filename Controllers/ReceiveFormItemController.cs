@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class ReceiveFormItemController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -27,6 +27,12 @@ namespace SieuThiDienThoai.Controllers
             var receiveFormItem = await _context.ReceiveFormItems
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            if (receiveFormItem == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
+
             return Ok(receiveFormItem);
         }
 
@@ -34,28 +40,43 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult ReceiveFormItemCreate([FromBody] ReceiveFormItem receiveFormItem)
         {
-            ReceiveFormItem test = new ReceiveFormItem();
-            test = receiveFormItem;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                ReceiveFormItem test = new ReceiveFormItem();
+                test = receiveFormItem;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: ReceiveFormItem/Delete/id
         [HttpDelete("{id}")]
-        public async Task<IActionResult> ReceiveFormItemsDelete(int id)
+        public async Task<IActionResult> ReceiveFormItemDelete(int id)
         {
             var receiveFormItem = await _context.ReceiveFormItems.FindAsync(id);
             if (receiveFormItem == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.ReceiveFormItems.Remove(receiveFormItem);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: ReceiveFormItem/Edit/id
@@ -64,7 +85,8 @@ namespace SieuThiDienThoai.Controllers
         {
             if (id != receiveFormItem.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!ReceiveFormItemExists(receiveFormItem.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(receiveFormItem);
         }
 
         // GETALL: ReceiveFormItem/Index
         [HttpGet]
         public async Task<IActionResult> ReceiveFormItemIndex()
         {
-            return Json(await _context.ReceiveFormItems.ToListAsync());
+            return Ok(await _context.ReceiveFormItems.ToListAsync());
         }
 
         private bool ReceiveFormItemExists(int id)

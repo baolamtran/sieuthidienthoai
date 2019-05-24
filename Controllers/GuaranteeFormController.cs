@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class GuaranteeFormController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: GuaranteeForm/Details/id
-       [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GuaranteeFormDetails(int id)
         {
             var guaranteeForm = await _context.GuaranteeForms
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (guaranteeForm == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(guaranteeForm);
         }
@@ -34,37 +40,53 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult GuaranteeFormCreate([FromBody] GuaranteeForm guaranteeForm)
         {
-            GuaranteeForm test = new GuaranteeForm();
-            test = guaranteeForm;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                GuaranteeForm test = new GuaranteeForm();
+                test = guaranteeForm;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: GuaranteeForm/Delete/id
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> GuaranteeFormDelete(int id)
         {
             var guaranteeForm = await _context.GuaranteeForms.FindAsync(id);
             if (guaranteeForm == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.GuaranteeForms.Remove(guaranteeForm);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: GuaranteeForm/Edit/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> GuaranteeFormEdit(int id,[FromBody] GuaranteeForm guaranteeForm)
+        public async Task<IActionResult> GuaranteeFormEdit(int id, [FromBody] GuaranteeForm guaranteeForm)
         {
             if (id != guaranteeForm.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!GuaranteeFormExists(guaranteeForm.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(guaranteeForm);
         }
 
         // GETALL: GuaranteeForm/Index
         [HttpGet]
         public async Task<IActionResult> GuaranteeFormIndex()
         {
-            return Json(await _context.GuaranteeForms.ToListAsync());
+            return Ok(await _context.GuaranteeForms.ToListAsync());
         }
 
         private bool GuaranteeFormExists(int id)

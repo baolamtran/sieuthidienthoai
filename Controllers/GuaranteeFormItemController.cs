@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class GuaranteeFormItemController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -27,6 +27,12 @@ namespace SieuThiDienThoai.Controllers
             var guaranteeFormItem = await _context.GuaranteeFormItems
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            if (guaranteeFormItem == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
+
             return Ok(guaranteeFormItem);
         }
 
@@ -34,14 +40,28 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult GuaranteeFormItemCreate([FromBody] GuaranteeFormItem guaranteeFormItem)
         {
-            GuaranteeFormItem test = new GuaranteeFormItem();
-            test = guaranteeFormItem;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                GuaranteeFormItem test = new GuaranteeFormItem();
+                test = guaranteeFormItem;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: GuaranteeFormItem/Delete/id
@@ -51,20 +71,22 @@ namespace SieuThiDienThoai.Controllers
             var guaranteeFormItem = await _context.GuaranteeFormItems.FindAsync(id);
             if (guaranteeFormItem == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.GuaranteeFormItems.Remove(guaranteeFormItem);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: GuaranteeFormItem/Edit/id
-       [HttpPut("{id}")]
-        public async Task<IActionResult> GuaranteeFormItemEdit(int id,[FromBody] GuaranteeFormItem guaranteeFormItem)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> GuaranteeFormItemEdit(int id, [FromBody] GuaranteeFormItem guaranteeFormItem)
         {
             if (id != guaranteeFormItem.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!GuaranteeFormItemExists(guaranteeFormItem.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(guaranteeFormItem);
         }
 
         // GETALL: GuaranteeFormItem/Index
         [HttpGet]
         public async Task<IActionResult> GuaranteeFormItemIndex()
         {
-            return Json(await _context.GuaranteeFormItems.ToListAsync());
+            return Ok(await _context.GuaranteeFormItems.ToListAsync());
         }
 
         private bool GuaranteeFormItemExists(int id)

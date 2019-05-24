@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class SupplierController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -19,12 +19,19 @@ namespace SieuThiDienThoai.Controllers
         {
             _context = context;
         }
+
         // GET: Supplier/Details/id
-       [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> SupplierDetails(int id)
         {
             var supplier = await _context.Suppliers
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (supplier == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(supplier);
         }
@@ -33,37 +40,53 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult SupplierCreate([FromBody] Supplier supplier)
         {
-            Supplier test = new Supplier();
-            test = supplier;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                Supplier test = new Supplier();
+                test = supplier;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: Supplier/Delete/id
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> SupplierDelete(int id)
         {
             var supplier = await _context.Suppliers.FindAsync(id);
             if (supplier == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.Suppliers.Remove(supplier);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: Supplier/Edit/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> SupplierEdit(int id,[FromBody] Supplier supplier)
+        public async Task<IActionResult> SupplierEdit(int id, [FromBody] Supplier supplier)
         {
             if (id != supplier.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -77,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!SupplierExists(supplier.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -85,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(supplier);
         }
 
         // GETALL: Supplier/Index
         [HttpGet]
         public async Task<IActionResult> SupplierIndex()
         {
-            return Json(await _context.Suppliers.ToListAsync());
+            return Ok(await _context.Suppliers.ToListAsync());
         }
 
         private bool SupplierExists(int id)

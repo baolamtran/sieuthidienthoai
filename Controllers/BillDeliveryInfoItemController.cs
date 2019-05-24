@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class BillDeliveryInfoItemController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -27,6 +27,12 @@ namespace SieuThiDienThoai.Controllers
             var billDeliveryInfoItem = await _context.BillDeliveryInfoItems
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            if (billDeliveryInfoItem == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
+
             return Ok(billDeliveryInfoItem);
         }
 
@@ -34,14 +40,28 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult BillDeliveryInfoItemCreate([FromBody] BillDeliveryInfoItem billDeliveryInfoItem)
         {
-            BillDeliveryInfoItem test = new BillDeliveryInfoItem();
-            test = billDeliveryInfoItem;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                BillDeliveryInfoItem test = new BillDeliveryInfoItem();
+                test = billDeliveryInfoItem;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: BillDeliveryInfoItem/Delete/id
@@ -51,20 +71,22 @@ namespace SieuThiDienThoai.Controllers
             var billDeliveryInfoItem = await _context.BillDeliveryInfoItems.FindAsync(id);
             if (billDeliveryInfoItem == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.BillDeliveryInfoItems.Remove(billDeliveryInfoItem);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: BillDeliveryInfoItem/Edit/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> BillDeliveryInfoItemEdit(int id,[FromBody] BillDeliveryInfoItem billDeliveryInfoItem)
+        public async Task<IActionResult> BillDeliveryInfoItemEdit(int id, [FromBody] BillDeliveryInfoItem billDeliveryInfoItem)
         {
             if (id != billDeliveryInfoItem.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!BillDeliveryInfoItemExists(billDeliveryInfoItem.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(billDeliveryInfoItem);
         }
 
         // GETALL: BillDeliveryInfoItem/Index
         [HttpGet]
         public async Task<IActionResult> BillDeliveryInfoItemIndex()
         {
-            return Json(await _context.BillDeliveryInfoItems.ToListAsync());
+            return Ok(await _context.BillDeliveryInfoItems.ToListAsync());
         }
 
         private bool BillDeliveryInfoItemExists(int id)
