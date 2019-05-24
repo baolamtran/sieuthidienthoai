@@ -17,6 +17,7 @@ namespace SieuThiDienThoai.Models
         public float Length { get; set; }
         public string Os { get; set; }
         public string Description { get; set; }
+         public string Thumb { get; set; }
         public int ProductCategoryId { get; set; }
         public int ManufacturerId { get; set; }
     }

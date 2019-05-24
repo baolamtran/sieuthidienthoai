@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class ProductController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -34,14 +34,26 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult ProductCreate([FromBody] Product product)
         {
-            Product test = new Product();
-            test = product;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                Product test = new Product();
+                test = product;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                     return Json(test);
+                } else {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+               
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: Product/Delete/id
@@ -59,8 +71,8 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // UPDATE: Product/Edit/id
-         [HttpPut("{id}")]
-        public async Task<IActionResult> ProductEdit(int id,[FromBody] Product product)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ProductEdit(int id, [FromBody] Product product)
         {
             if (id != product.Id)
             {
