@@ -27,6 +27,12 @@ namespace SieuThiDienThoai.Controllers
             var productCategory = await _context.ProductCategories
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            if (productCategory == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
+
             return Ok(productCategory);
         }
 
@@ -34,14 +40,28 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult ProductCategoryCreate([FromBody] ProductCategory productCategory)
         {
-            ProductCategory test = new ProductCategory();
-            test = productCategory;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                ProductCategory test = new ProductCategory();
+                test = productCategory;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: ProductCategory/Delete/id
@@ -51,11 +71,12 @@ namespace SieuThiDienThoai.Controllers
             var productCategory = await _context.ProductCategories.FindAsync(id);
             if (productCategory == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.ProductCategories.Remove(productCategory);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: ProductCategory/Edit/id
@@ -64,7 +85,8 @@ namespace SieuThiDienThoai.Controllers
         {
             if (id != productCategory.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!ProductCategoryExists(productCategory.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,15 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(productCategory);
         }
 
         // GETALL: ProductCategory/Index
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> ProductCategoryIndex()
         {
-            //return Json("La sao");
-            return Json(await _context.ProductCategories.ToListAsync());
+            return Ok(await _context.ProductCategories.ToListAsync());
         }
 
         private bool ProductCategoryExists(int id)

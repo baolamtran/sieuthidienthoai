@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class PromotionController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: Promotion/Details/id
-         [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> PromotionDetails(int id)
         {
             var promotion = await _context.Promotions
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (promotion == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(promotion);
         }
@@ -34,37 +40,53 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult PromotionCreate([FromBody] Promotion promotion)
         {
-            Promotion test = new Promotion();
-            test = promotion;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                Promotion test = new Promotion();
+                test = promotion;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: Promotion/Delete/id
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> PromotionDelete(int id)
         {
             var promotion = await _context.Promotions.FindAsync(id);
             if (promotion == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.Promotions.Remove(promotion);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: Promotion/Edit/id
-         [HttpPut("{id}")]
-        public async Task<IActionResult> PromotionEdit(int id,[FromBody] Promotion promotion)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PromotionEdit(int id, [FromBody] Promotion promotion)
         {
             if (id != promotion.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!PromotionExists(promotion.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(promotion);
         }
 
         // GETALL: Promotion/Index
         [HttpGet]
         public async Task<IActionResult> PromotionIndex()
         {
-            return Json(await _context.Promotions.ToListAsync());
+            return Ok(await _context.Promotions.ToListAsync());
         }
 
         private bool PromotionExists(int id)

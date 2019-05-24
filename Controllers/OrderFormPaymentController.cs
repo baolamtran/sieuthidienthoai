@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class OrderFormPaymentController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: OrderFormPayment/Details/id
-         [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> OrderFormPaymentDetails(int id)
         {
             var orderFormPayment = await _context.OrderFormPayments
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (orderFormPayment == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(orderFormPayment);
         }
@@ -34,37 +40,53 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult OrderFormPaymentCreate([FromBody] OrderFormPayment orderFormPayment)
         {
-            OrderFormPayment test = new OrderFormPayment();
-            test = orderFormPayment;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                OrderFormPayment test = new OrderFormPayment();
+                test = orderFormPayment;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: OrderFormPayment/Delete/id
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> OrderFormPaymentDelete(int id)
         {
             var orderFormPayment = await _context.OrderFormPayments.FindAsync(id);
             if (orderFormPayment == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.OrderFormPayments.Remove(orderFormPayment);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: OrderFormPayment/Edit/id
-         [HttpPut("{id}")]
-        public async Task<IActionResult> OrderFormPaymentEdit(int id,[FromBody] OrderFormPayment orderFormPayment)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> OrderFormPaymentEdit(int id, [FromBody] OrderFormPayment orderFormPayment)
         {
             if (id != orderFormPayment.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!OrderFormPaymentExists(orderFormPayment.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(orderFormPayment);
         }
 
         // GETALL: OrderFormPayment/Index
         [HttpGet]
         public async Task<IActionResult> OrderFormPaymentIndex()
         {
-            return Json(await _context.OrderFormPayments.ToListAsync());
+            return Ok(await _context.OrderFormPayments.ToListAsync());
         }
 
         private bool OrderFormPaymentExists(int id)

@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class OrderFormController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: OrderForm/Details/id
-         [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> OrderFormDetails(int id)
         {
             var orderForm = await _context.OrderForms
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (orderForm == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(orderForm);
         }
@@ -34,14 +40,28 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult OrderFormCreate([FromBody] OrderForm orderForm)
         {
-            OrderForm test = new OrderForm();
-            test = orderForm;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                OrderForm test = new OrderForm();
+                test = orderForm;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: OrderForm/Delete/id
@@ -51,20 +71,22 @@ namespace SieuThiDienThoai.Controllers
             var orderForm = await _context.OrderForms.FindAsync(id);
             if (orderForm == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.OrderForms.Remove(orderForm);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: OrderForm/Edit/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> OrderFormEdit(int id,[FromBody] OrderForm orderForm)
+        public async Task<IActionResult> OrderFormEdit(int id, [FromBody] OrderForm orderForm)
         {
             if (id != orderForm.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!OrderFormExists(orderForm.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(orderForm);
         }
 
         // GETALL: OrderForm/Index
         [HttpGet]
         public async Task<IActionResult> OrderFormIndex()
         {
-            return Json(await _context.OrderForms.ToListAsync());
+            return Ok(await _context.OrderForms.ToListAsync());
         }
 
         private bool OrderFormExists(int id)

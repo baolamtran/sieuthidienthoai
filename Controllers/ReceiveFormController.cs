@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class ReceiveFormController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -27,6 +27,12 @@ namespace SieuThiDienThoai.Controllers
             var receiveForm = await _context.ReceiveForms
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            if (receiveForm == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
+
             return Ok(receiveForm);
         }
 
@@ -34,14 +40,28 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult ReceiveFormCreate([FromBody] ReceiveForm receiveForm)
         {
-            ReceiveForm test = new ReceiveForm();
-            test = receiveForm;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                ReceiveForm test = new ReceiveForm();
+                test = receiveForm;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: ReceiveForm/Delete/id
@@ -51,20 +71,22 @@ namespace SieuThiDienThoai.Controllers
             var receiveForm = await _context.ReceiveForms.FindAsync(id);
             if (receiveForm == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.ReceiveForms.Remove(receiveForm);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: ReceiveForm/Edit/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> ReceiveFormEdit(int id,[FromBody] ReceiveForm receiveForm)
+        public async Task<IActionResult> ReceiveFormEdit(int id, [FromBody] ReceiveForm receiveForm)
         {
             if (id != receiveForm.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!ReceiveFormExists(receiveForm.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(receiveForm);
         }
 
         // GETALL: ReceiveForm/Index
         [HttpGet]
         public async Task<IActionResult> ReceiveFormIndex()
         {
-            return Json(await _context.ReceiveForms.ToListAsync());
+            return Ok(await _context.ReceiveForms.ToListAsync());
         }
 
         private bool ReceiveFormExists(int id)

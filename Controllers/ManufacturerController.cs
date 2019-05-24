@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class ManufacturerController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -27,6 +27,12 @@ namespace SieuThiDienThoai.Controllers
             var manufacturer = await _context.Manufacturers
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+            if (manufacturer == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
+
             return Ok(manufacturer);
         }
 
@@ -34,37 +40,53 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult ManufacturerCreate([FromBody] Manufacturer manufacturer)
         {
-            Manufacturer test = new Manufacturer();
-            test = manufacturer;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                Manufacturer test = new Manufacturer();
+                test = manufacturer;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: Manufacturer/Delete/id
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> ManufacturerDelete(int id)
         {
             var manufacturer = await _context.Manufacturers.FindAsync(id);
             if (manufacturer == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.Manufacturers.Remove(manufacturer);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: Manufacturer/Edit/id
         [HttpPut("{id}")]
-        public async Task<IActionResult> ManufacturerEdit(int id,[FromBody] Manufacturer manufacturer)
+        public async Task<IActionResult> ManufacturerEdit(int id, [FromBody] Manufacturer manufacturer)
         {
             if (id != manufacturer.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!ManufacturerExists(manufacturer.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(manufacturer);
         }
 
         // GETALL: Manufacturer/Index
         [HttpGet]
         public async Task<IActionResult> ManufacturerIndex()
         {
-            return Json(await _context.Manufacturers.ToListAsync());
+            return Ok(await _context.Manufacturers.ToListAsync());
         }
 
         private bool ManufacturerExists(int id)

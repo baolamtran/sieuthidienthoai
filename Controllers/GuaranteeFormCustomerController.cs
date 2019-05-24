@@ -10,7 +10,7 @@ using SieuThiDienThoai.Models;
 
 namespace SieuThiDienThoai.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     public class GuaranteeFormCustomerController : Controller
     {
         private readonly SieuThiDienThoaiDbContext _context;
@@ -21,11 +21,17 @@ namespace SieuThiDienThoai.Controllers
         }
 
         // GET: GuaranteeFormCustomer/Details/id
-         [HttpGet("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GuaranteeFormCustomerDetails(int id)
         {
             var guaranteeFormCustomer = await _context.GuaranteeFormCustomers
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (guaranteeFormCustomer == null)
+            {
+                Console.WriteLine("Id không tồn tại");
+                return NotFound();
+            }
 
             return Ok(guaranteeFormCustomer);
         }
@@ -34,14 +40,28 @@ namespace SieuThiDienThoai.Controllers
         [HttpPost]
         public IActionResult GuaranteeFormCustomerCreate([FromBody] GuaranteeFormCustomer guaranteeFormCustomer)
         {
-            GuaranteeFormCustomer test = new GuaranteeFormCustomer();
-            test = guaranteeFormCustomer;
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(test);
-                _context.SaveChangesAsync();
+                GuaranteeFormCustomer test = new GuaranteeFormCustomer();
+                test = guaranteeFormCustomer;
+                if (ModelState.IsValid)
+                {
+                    _context.Add(test);
+                    _context.SaveChangesAsync();
+                    return Ok(test);
+                }
+                else
+                {
+                    Console.WriteLine("Không đúng định dạng");
+                    return BadRequest();
+                }
+
             }
-            return Json("Success");
+            catch (ArgumentException err)
+            {
+                Console.WriteLine("Không đúng định dạng", err);
+                return NotFound();
+            }
         }
 
         // DELETE: GuaranteeFormCustomer/Delete/id
@@ -51,20 +71,22 @@ namespace SieuThiDienThoai.Controllers
             var guaranteeFormCustomer = await _context.GuaranteeFormCustomers.FindAsync(id);
             if (guaranteeFormCustomer == null)
             {
+                Console.WriteLine("Id không tồn tại");
                 return NotFound();
             }
             _context.GuaranteeFormCustomers.Remove(guaranteeFormCustomer);
             await _context.SaveChangesAsync();
-            return Json("Success");
+            return Ok();
         }
 
         // UPDATE: GuaranteeFormCustomer/Edit/id
-         [HttpPut("{id}")]
-        public async Task<IActionResult> GuaranteeFormCustomerEdit(int id,[FromBody] GuaranteeFormCustomer guaranteeFormCustomer)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> GuaranteeFormCustomerEdit(int id, [FromBody] GuaranteeFormCustomer guaranteeFormCustomer)
         {
             if (id != guaranteeFormCustomer.Id)
             {
-                return Json("Fail");
+                Console.WriteLine("Không đúng định dạng");
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -78,7 +100,8 @@ namespace SieuThiDienThoai.Controllers
                 {
                     if (!GuaranteeFormCustomerExists(guaranteeFormCustomer.Id))
                     {
-                        return Json("Not found");
+                        Console.WriteLine("Id không tồn tại");
+                        return NotFound();
                     }
                     else
                     {
@@ -86,14 +109,14 @@ namespace SieuThiDienThoai.Controllers
                     }
                 }
             }
-            return Json("Success");
+            return Ok(guaranteeFormCustomer);
         }
 
         // GETALL: GuaranteeFormCustomer/Index
         [HttpGet]
         public async Task<IActionResult> GuaranteeFormCustomerIndex()
         {
-            return Json(await _context.GuaranteeFormCustomers.ToListAsync());
+            return Ok(await _context.GuaranteeFormCustomers.ToListAsync());
         }
 
         private bool GuaranteeFormCustomerExists(int id)
