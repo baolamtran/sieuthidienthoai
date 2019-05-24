@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mori\\Desktop\\SieuThiDienThoai\\SieuThiDienThoai.csproj": {}
+    "/home/baolamtran/Documents/sieuthidienthoai/SieuThiDienThoai.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mori\\Desktop\\SieuThiDienThoai\\SieuThiDienThoai.csproj": {
+    "/home/baolamtran/Documents/sieuthidienthoai/SieuThiDienThoai.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mori\\Desktop\\SieuThiDienThoai\\SieuThiDienThoai.csproj",
+        "projectUniqueName": "/home/baolamtran/Documents/sieuthidienthoai/SieuThiDienThoai.csproj",
         "projectName": "SieuThiDienThoai",
-        "projectPath": "C:\\Users\\Mori\\Desktop\\SieuThiDienThoai\\SieuThiDienThoai.csproj",
-        "packagesPath": "C:\\Users\\Mori\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mori\\Desktop\\SieuThiDienThoai\\obj\\",
+        "projectPath": "/home/baolamtran/Documents/sieuthidienthoai/SieuThiDienThoai.csproj",
+        "packagesPath": "/home/baolamtran/.nuget/packages/",
+        "outputPath": "/home/baolamtran/Documents/sieuthidienthoai/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "/usr/share/dotnet/sdk/NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Mori\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/baolamtran/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
